@@ -28,13 +28,14 @@ This project captures data from the Microsoft Fabric Capacity Metrics App semant
    - `semantic_model_name`: usually `Fabric Capacity Metrics`, unless the model was renamed.
    - `tables_to_export`: optional list of model tables to export. Leave empty to discover visible tables.
    - `dax_queries`: optional named DAX queries for curated extracts.
+   - `target_schema`: destination schema. It defaults to `dbo`; set another valid schema name when needed.
    - `write_mode`: use `append` for scheduled captures.
 6. Run the notebook once interactively to validate permissions and table output.
 7. Schedule it with a Fabric pipeline or notebook schedule.
 
 ## Output tables
 
-By default, exported tables use the `capacity_metrics_` prefix. The notebook also writes `capacity_metrics_capture_run_log`, which records each export attempt, target table, row count, status, and error text.
+By default, exported tables are created in the `dbo` schema with the `capacity_metrics_` prefix. The notebook creates the configured schema when it does not exist, then creates each Delta table before loading rows. This also provisions tables for valid extracts that return no rows. The notebook writes `capacity_metrics_capture_run_log` in the same schema to record each export attempt, target table, row count, status, and error text.
 
 ## Notes
 
