@@ -35,7 +35,11 @@ This project captures data from the Microsoft Fabric Capacity Metrics App semant
 
 ## Output tables
 
-By default, exported tables are created in the `dbo` schema with the `capacity_metrics_` prefix. The notebook creates the configured schema when it does not exist, then creates each Delta table before loading rows. This also provisions tables for valid extracts that return no rows. The notebook writes `capacity_metrics_capture_run_log` in the same schema to record each export attempt, target table, row count, status, and error text.
+By default, exported tables are created in the `dbo` schema with the `capacity_metrics_` prefix. The notebook creates the configured schema when it does not exist, then creates each Delta table before loading rows. This also provisions tables for valid extracts that return no rows.
+
+For each extract, the notebook calculates a SHA-256 hash from the source columns only. Capture timestamps and run metadata are excluded. In `append` mode, it removes duplicates within the incoming extract and skips hashes already stored in the target table, making repeated full-extract runs idempotent. A changed source row receives a new hash and is retained as a new version.
+
+The notebook writes `capacity_metrics_capture_run_log` in the same schema to record source rows, newly written rows, target table, status, and error text for each export attempt.
 
 ## Notes
 
